@@ -1,14 +1,24 @@
 ﻿Get-ChildItem -filter *.pdf | ForEach-Object {
     $filename = $_.Name
     
-    $textContent = pdftotext.exe -enc UTF-8 -layout ${filename} - | Out-String
+    $textContent = pdftotext.exe -enc UTF-8 -bom -layout ${filename} - | Out-String
 
-    $invoiceNumber = ${textContent} -replace "(?s).*Bestellnummer:\W*([A-Z0-9]+).*", '$1'
-    $invoiceDate = ${textContent} -replace "(?s).*Gültig ab:\W*([0-9][0-9])\.([0-9][0-9])\.([0-9][0-9][0-9][0-9]).*", '$3-$2-$1'
-    $invoiceAmount = ${textContent} -replace "(?s).*Betrag:\W*([0-9]+,[0-9][0-9]).*", '$1'
-    $parkingLocation = ${textContent} -replace "(?s).*Parkscheinautomat:\W*[0-9]+,\W*([A-Za-z.]+).*", '$1'
+    if ( ${textContent} -cmatch "(?s).*Bestellnummer:\W*([A-Z0-9]+).*") {
+        $invoiceNumber = $matches[1]
+    }
+    if ( ${textContent} -cmatch "(?s).*Gültig ab:\W*([0-9][0-9])\.([0-9][0-9])\.([0-9][0-9][0-9][0-9]).*") { 
+        $invoiceDate = $matches[3] + "-" + $matches[2] + "-" + $matches[1]
+    }
+    
+    if ( ${textContent} -cmatch "(?s).*Betrag:\W*([0-9]+,[0-9][0-9]).*") { 
+        $invoiceAmount = $matches[1] 
+    }
+    
+    if ( ${textContent} -cmatch "(?s).*Parkscheinautomat:\W*[0-9]+,\W*([A-Za-z.]+).*") { 
+        $parkingLocation = $matches[1]
+    }
 
-    if (${textContent} -in ${invoiceNumber}, ${invoiceDate}, ${invoiceAmount}, ${parkingLocation}) {
+    if (-not ${invoiceNumber} -or -not ${invoiceDate} -or -not ${invoiceAmount} -or -not ${parkingLocation}) {
         Write-Host "Invalid data. Ignoring ${filename}"
         Return
     }
