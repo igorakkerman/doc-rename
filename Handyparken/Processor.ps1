@@ -8,8 +8,8 @@
     $invoiceAmount = ${textContent} -replace "(?s).*Betrag:\W*([0-9]+,[0-9][0-9]).*", '$1'
     $parkingLocation = ${textContent} -replace "(?s).*Parkscheinautomat:\W*[0-9]+,\W*([A-Za-z.]+).*", '$1'
 
-    if (${invoiceNumber} -eq ${textContent}) {
-        Write-Host "No invoice number. Ignoring ${filename}"
+    if (${textContent} -in ${invoiceNumber}, ${invoiceDate}, ${invoiceAmount}, ${parkingLocation}) {
+        Write-Host "Invalid data. Ignoring ${filename}"
         Return
     }
 
