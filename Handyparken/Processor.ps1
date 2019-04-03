@@ -6,8 +6,12 @@
     if ( ${textContent} -cmatch "(?s).*Bestellnummer:\W*([A-Z0-9]+).*") {
         $invoiceNumber = $matches[1]
     }
-    if ( ${textContent} -cmatch "(?s).*Gültig ab:\W*([0-9][0-9])\.([0-9][0-9])\.([0-9][0-9][0-9][0-9]).*") { 
-        $invoiceDate = $matches[3] + "-" + $matches[2] + "-" + $matches[1]
+    if ( ${textContent} -cmatch "(?s).*Gültig ab:\W*([0-9][0-9])\.([0-9][0-9])\.([0-9][0-9][0-9][0-9]).*") {;
+        $invoiceYear = $matches[3]
+        $invoiceMonth = $matches[2]
+        $invoiceDay = $matches[1]
+
+        $invoiceDate =  ${invoiceYear} + "-" + ${invoiceMonth} + "-" + ${invoiceDay}
     }
     
     if ( ${textContent} -cmatch "(?s).*Betrag:\W*([0-9]+,[0-9][0-9]).*") { 
@@ -22,6 +26,8 @@
         Write-Host "Invalid data. Ignoring ${filename}"
         Return
     }
+
+    "`"${invoiceNumber}`";`"${invoiceDay}.${invoiceMonth}`";`"Parken Projektarbeit`";`"${invoiceAmount}`"" | Out-File -Append -FilePath list.csv 
 
     $index = 0;
     do {
