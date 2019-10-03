@@ -18,7 +18,7 @@
         $invoiceAmount = $matches[1] 
     }
     
-    if ( ${textContent} -cmatch "(?s).*Parkscheinautomat:\W*[0-9]+,\W*([A-Za-z.]+).*") { 
+    if ( ${textContent} -cmatch "(?s).*Parkscheinautomat:\W*[0-9]+,\W*([A-Za-zÄÖÜäoüß.]+).*") { 
         $parkingLocation = $matches[1]
     }
 
