@@ -20,13 +20,13 @@
 
     $invoiceNumberClean = ${invoiceNumber} -replace "/", "_"
 
-    $newFilename = "${invoiceDate} 01 Rechnung SIXT share ${invoiceNumberClean} €.pdf"
+    $newFilename = "${invoiceDate} 01 Rechnung SIXT share ${invoiceNumberClean}.pdf"
 
-    Write-Host "Number: $invoiceNumber"
-    Write-Host "Date:   $invoiceDate"
+    # Write-Host "Number: $invoiceNumber"
+    # Write-Host "Date:   $invoiceDate"
     # Write-Host "Amount: $invoiceAmount"
-    Write-Host "OLD:    $filename"
-    Write-Host "NEW:    $newFilename"
+    # Write-Host "OLD:    $filename"
+    # Write-Host "NEW:    $newFilename"
 
     Write-Host "Renaming '${filename}' to '${newFilename}'"
     Rename-Item -Path "${filename}" -NewName ${newFilename}

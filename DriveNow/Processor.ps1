@@ -22,11 +22,11 @@
 
     $newFilename = "${invoiceDate} 01 Rechnung DriveNow ${invoiceNumberClean} ${invoiceAmount}€.pdf"
 
-    Write-Host "Number: $invoiceNumber"
-    Write-Host "Date:   $invoiceDate"
-    Write-Host "Amount: $invoiceAmount"
-    Write-Host "OLD:    $filename"
-    Write-Host "NEW:    $newFilename"
+    # Write-Host "Number: $invoiceNumber"
+    # Write-Host "Date:   $invoiceDate"
+    # Write-Host "Amount: $invoiceAmount"
+    # Write-Host "OLD:    $filename"
+    # Write-Host "NEW:    $newFilename"
 
     Write-Host "Renaming '${filename}' to '${newFilename}'"
     Rename-Item -Path "${filename}" -NewName ${newFilename}
