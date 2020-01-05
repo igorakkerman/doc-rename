@@ -3,7 +3,7 @@
 
     $textContent = pdftotext -enc UTF-8 -bom -q ${filename} - | Out-String
 
-    if (${textContent} -NotMatch "DriveNow") {
+    if (${textContent} -NotMatch "drive-now.com") {
         Write-Host "Ignoring ${filename}"
         Return
     }
