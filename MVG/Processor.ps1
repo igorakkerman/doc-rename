@@ -1,7 +1,12 @@
 ﻿Get-ChildItem -filter *.pdf | ForEach-Object {
     $filename = $_.Name
     
-    $textContent = pdftotext.exe -enc UTF-8 -bom ${filename} - | Out-String
+    $textContent = pdftotext -enc UTF-8 -bom -q ${filename} - | Out-String
+
+    if (${textContent} -NotMatch "MVG") {
+        Write-Host "Ignoring ${filename}"
+        Return
+    }
 
     if ( ${textContent} -cmatch "(?s).*Rechnungsnummer:\W*(MVG)?([A-Z0-9-]+).*") {
         $invoiceNumber = $matches[1] + $matches[2]
