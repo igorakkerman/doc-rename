@@ -1,4 +1,4 @@
-﻿Get-ChildItem -filter *.pdf | ForEach-Object {
+﻿Get-ChildItem -filter *.pdf  | Where-Object {$_.LastWriteTime -ge "2019-11-01"} | ForEach-Object {
     $filename = $_.Name
     
     $textContent = pdftotext -enc UTF-8 -bom -q ${filename} - | Out-String
@@ -50,7 +50,7 @@
     do {
         ${index}++
 
-        $newFilename = "${invoiceDate} 0${index} Rechnung ${invoiceNumber} ${invoiceAmount}€.pdf"
+        $newFilename = "${invoiceDate} 0${index} Rechnung MVG ${invoiceNumber} ${invoiceAmount}€.pdf"
 
         if (${newFilename} -eq ${filename}) {
             Write-Output "File has correct name. Ignoring ${filename}"
