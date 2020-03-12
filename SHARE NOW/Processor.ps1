@@ -19,7 +19,7 @@
         $invoiceDate =  ${invoiceYear} + "-" + ${invoiceMonth} + "-" + ${invoiceDay}
     }
     
-    if ( ${textContent} -cmatch "Gesamtbetrag.*([0-9]+,[0-9][0-9])") { 
+    if ( ${textContent} -cmatch "Gesamtbetrag.* ([0-9]+,[0-9][0-9])") { 
         $invoiceAmount = $matches[1] 
     }
    
