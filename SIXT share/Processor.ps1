@@ -27,7 +27,7 @@
 
     # Write-Host "Number: $invoiceNumber"
     # Write-Host "Date:   $invoiceDate"
-    Write-Host "Amount: $invoiceAmount"
+    # Write-Host "Amount: $invoiceAmount"
     # Write-Host "OLD:    $filename"
     # Write-Host "NEW:    $newFilename"
 
