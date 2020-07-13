@@ -4,7 +4,7 @@
     $textContent = pdftotext -enc UTF-8 -bom -q ${filename} - | Out-String
 
     if (${textContent} -NotMatch "SIXT share") {
-        Write-Host "Ignoring ${filename}"
+        # Write-Host "Ignoring ${filename}"
         Return
     }
     Write-Host "File $filename"
