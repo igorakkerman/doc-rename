@@ -4,7 +4,7 @@
     $textContent = pdftotext -enc UTF-8 -bom -q ${filename} - | Out-String
 
     if (${textContent} -NotMatch "MVG") {
-        Write-Host "Ignoring ${filename}"
+        # Write-Host "Ignoring ${filename}"
         Return
     }
 
@@ -42,7 +42,7 @@
     
     # Write-Host "${filename}: ${invoiceNumber} ${InvoiceDate} ${InvoiceAmount}"
     if (-not ${invoiceNumber} -or -not ${invoiceDate} -or -not ${invoiceAmount}) {
-        Write-Output "Invalid data. Ignoring ${filename}"
+        # Write-Output "Invalid data. Ignoring ${filename}"
         Return
     }
 
@@ -53,7 +53,7 @@
         $newFilename = "${invoiceDate} 0${index} Rechnung MVG ${invoiceNumber} ${invoiceAmount}€.pdf"
 
         if (${newFilename} -eq ${filename}) {
-            Write-Output "File has correct name. Ignoring ${filename}"
+            # Write-Output "File has correct name. Ignoring ${filename}"
             Return
         }  
     }
