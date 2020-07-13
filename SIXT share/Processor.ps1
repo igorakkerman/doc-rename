@@ -17,13 +17,25 @@
     }
 
     if ([string]::IsNullOrWhiteSpace($invoiceNumber)) {
-        Write-Host "Ignoring   ${filename}"
+        # Write-Host "Ignoring ${filename}"
         Return
     }
 
     $invoiceNumberClean = ${invoiceNumber} -replace "/", "_"
 
-    $newFilename = "${invoiceDate} 01 Rechnung SIXT share ${invoiceNumberClean}${invoiceAmount}.pdf"
+    $index = 0;
+    do {
+        ${index}++
+    }
+    while (Test-Path "${invoiceDate} 0${index}*")
+
+    $newFilename = "${invoiceDate} 0${index} Rechnung SIXT share ${invoiceNumberClean}${invoiceAmount}.pdf"
+
+    if (${newFilename} -eq ${filename}) {
+        # Write-Output "File has correct name. Ignoring ${filename}"
+        Return
+    }  
+
 
     # Write-Host "Number: $invoiceNumber"
     # Write-Host "Date:   $invoiceDate"
