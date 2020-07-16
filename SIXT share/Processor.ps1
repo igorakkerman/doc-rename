@@ -9,6 +9,7 @@
     }
     Write-Host "File $filename"
 
+    $documentType = if ($textContent -notmatch "Rechnungsstorno") {"Rechnung"} else {"Storno"}
     $invoiceNumber = ${textContent} -replace "(?s).*?\r\n([0-9A-Z/]+?) Pullach,.*", '$1'
     $invoiceDate = ${textContent} -replace "(?s).*?\r\n[0-9A-Z/]+? Pullach, ([0-9][0-9])\.([0-9][0-9])\.([0-9][0-9][0-9][0-9]).*", '$3-$2-$1'
     $invoiceAmount = ${textContent} -replace "(?s).+\r\n([0-9]+),\s?([0-9][0-9]) EUR\r\n.+", ' $1,$2€'
@@ -29,7 +30,7 @@
     }
     while (Test-Path "${invoiceDate} 0${index}*")
 
-    $newFilename = "${invoiceDate} 0${index} Rechnung SIXT share ${invoiceNumberClean}${invoiceAmount}.pdf"
+    $newFilename = "${invoiceDate} 0${index} ${documentType} SIXT share ${invoiceNumberClean}${invoiceAmount}.pdf"
 
     if (${newFilename} -eq ${filename}) {
         # Write-Output "File has correct name. Ignoring ${filename}"
