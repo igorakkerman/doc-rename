@@ -1,4 +1,4 @@
-﻿Get-ChildItem -filter "*.pdf" | Where-Object { $_.LastWriteTime -ge "2020-04-01" } | ForEach-Object {
+﻿Get-ChildItem -filter "*.pdf" | Where-Object { $_.LastWriteTime -ge "2020-12-01" } | ForEach-Object {
     $filename = $_.Name
 
     $textContent = pdftotext -enc UTF-8 -bom -q ${filename} - | Out-String
@@ -8,6 +8,8 @@
         Return
     }
     Write-Host "File $filename"
+
+    pause
 
     $documentType = if ($textContent -notmatch "Rechnungsstorno") {"Rechnung"} else {"Storno"}
     $invoiceNumber = ${textContent} -replace "(?s).*?\r\n([0-9A-Z/]+?) Pullach,.*", '$1'
