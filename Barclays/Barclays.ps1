@@ -1,12 +1,12 @@
-﻿Get-ChildItem -filter *.pdf | Where-Object {$_.LastWriteTime -ge "2019-01-01"} | ForEach-Object {
+Get-ChildItem -filter *.pdf | Where-Object {$_.LastWriteTime -ge "2019-01-01"} | ForEach-Object {
     $filename = $_.Name
 
     $textContent = pdftotext -raw -enc UTF-8 -bom -q ${filename} - | Out-String
 
-    if (${textContent} -NotMatch "service@barclaycard.de") {
-        Write-Host "No Barclaycard statement. Skipping ${filename}"
-        Return
-    }
+    # if (${textContent} -NotMatch "Barclay") {
+    #     Write-Host "No Barclays statement. Skipping ${filename}"
+    #     Return
+    # }
 
     if ( ${textContent} -cmatch "(?s).*Kontoübersicht vom ([0-9]+)\. ([A-Za-zä]+) ([0-9][0-9][0-9][0-9]).*") {
     
