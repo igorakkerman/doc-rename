@@ -1,48 +1,35 @@
-﻿Get-ChildItem -filter *.pdf  | Where-Object {$_.LastWriteTime -ge "2020-04-01"} | ForEach-Object -Parallel {
+﻿Get-ChildItem -filter *.pdf  | Where-Object {$_.LastWriteTime -ge "2022-10-01"} | ForEach-Object <# -Parallel #> {
     $filename = $_.Name
     
     $textContent = pdftotext -enc UTF-8 -bom -q ${filename} - | Out-String
 
     if (${textContent} -NotMatch "MVG") {
-        # Write-Host "Ignoring ${filename}"
+        Write-Output "Not from MVG. Ignoring ${filename}"
         Return
     }
 
-    if ( ${textContent} -cmatch "(?s).*Rechnungsnummer:\W*(MVG)?([A-Z0-9-]+).*") {
-        $invoiceNumber = $matches[1] + $matches[2]
+    if ( ${textContent} -cmatch "(?s).*Rechnungsnummer:\W*([0-9]+).*") {
+        $invoiceNumber = $matches[1]
     }
-    if ( ${textContent} -cmatch "(?s).*Bestellung vom ([0-9]+)\. ([A-Za-zä]+) ([0-9][0-9][0-9][0-9]).*") {
-    
-        $invoiceDay = "{0:00}" -f [int]$matches[1]
-        $invoiceMonthText = $matches[2]
-        $invoiceYear = $matches[3]
+    if ( ${textContent} -cmatch "(?s).*Kaufdatum: (\d{2})\.(\d{2}).(\d{4}).*") {
+        $purchaseDay = $matches[1]
+        $purchaseMonth = $matches[2]
+        $purchaseYear = $matches[3]
 
-        $invoiceMonth = switch ($invoiceMonthText) {
-            "Januar" { "01" }
-            "Februar" { "02" }
-            "März" { "03" }
-            "April" { "04" }
-            "Mai" { "05" }
-            "Juni" { "06" }
-            "Juli" { "07" }
-            "August" { "08" }
-            "September" { "09" }
-            "Oktober" { "10" }
-            "November" { "11" }
-            "Dezember" { "12" }
-            Default { "ERROR" }
-        }
+        $purchaseDate = ${purchaseYear} + "-" + ${purchaseMonth} + "-" + ${purchaseDay}
 
-        $invoiceDate = ${invoiceYear} + "-" + ${invoiceMonth} + "-" + ${invoiceDay}
+        Write-Output "Purchase date: $purchaseDate"
     }
     
-    if ( ${textContent} -cmatch "(?s).*Brutto Gesamt:.*(?:Summe)?\W+([0-9]+,[0-9][0-9]).*") { 
+    if ( ${textContent} -cmatch "(?s).*Rechnungssumme.*\W+(\d+,\d{2})\W+EUR.*") { 
         $invoiceAmount = $matches[1] 
+
+        Write-Output "Invoice amount: $invoiceAmount"
     }
     
-    # Write-Host "${filename}: ${invoiceNumber} ${InvoiceDate} ${InvoiceAmount}"
-    if (-not ${invoiceNumber} -or -not ${invoiceDate} -or -not ${invoiceAmount}) {
-        # Write-Output "Invalid data. Ignoring ${filename}"
+    # Write-Output "${filename}: ${invoiceNumber} ${purchaseDate} ${InvoiceAmount}"
+    if (-not ${invoiceNumber} -or -not ${purchaseDate} -or -not ${invoiceAmount}) {
+        Write-Output "Invalid invoice data. Ignoring ${filename}"
         Return
     }
 
@@ -50,14 +37,14 @@
     do {
         ${index}++
 
-        $newFilename = "${invoiceDate} 0${index} Rechnung MVG ${invoiceNumber} ${invoiceAmount}€.pdf"
+        $newFilename = "${purchaseDate} 0${index} MVG ${invoiceNumber} ${invoiceAmount}€.pdf"
 
         if (${newFilename} -eq ${filename}) {
-            # Write-Output "File has correct name. Ignoring ${filename}"
+            Write-Output "File has correct name. Ignoring ${filename}"
             Return
         }  
     }
-    while (Test-Path "${invoiceDate} 0${index}*")
+    while (Test-Path "${purchaseDate} 0${index}*")
 
     Write-Output "Renaming '${filename}' to '${newFilename}'"
     Rename-Item -Path "${filename}" -NewName ${newFilename}
