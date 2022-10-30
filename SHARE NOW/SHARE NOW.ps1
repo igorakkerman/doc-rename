@@ -4,14 +4,14 @@
     $textContent = pdftotext.exe -raw -enc UTF-8 -q ${filename} - | Out-String
 
     if (${textContent} -NotMatch "SHARE NOW") {
-        # Write-Output "Ignoring ${filename}"
+        Write-Verbose "Ignoring ${filename}"
         Return
     }
 
     if ( ${textContent} -cmatch "(?s).*\r\n([0-9]+)\r\nRechnungsnr.*") {
         $invoiceNumber = $matches[1]
     }
-    if ( ${textContent} -cmatch "(?s)Leistungszeitraum von:\W*([0-9][0-9])\.([0-9][0-9])\.([0-9][0-9][0-9][0-9]).*") {;
+    if ( ${textContent} -cmatch "(?s)Leistungszeitraum von:\s*([0-9][0-9])\.([0-9][0-9])\.([0-9][0-9][0-9][0-9]).*") {;
         $invoiceYear = $matches[3]
         $invoiceMonth = $matches[2]
         $invoiceDay = $matches[1]
@@ -23,9 +23,9 @@
         $invoiceAmount = $matches[1] 
     }
    
-    # Write-Output "Date:   ${invoiceDate}"
-    # Write-Output "Amount: ${invoiceAmount}"
-    # Write-Output "Number: ${invoiceNumber}"
+    Write-Verbose "Date:   ${invoiceDate}"
+    Write-Verbose "Amount: ${invoiceAmount}"
+    Write-Verbose "Number: ${invoiceNumber}"
 
     if (-not ${invoiceNumber} -or -not ${invoiceDate} -or -not ${invoiceAmount}) {
         Write-Output "Invalid data. Ignoring ${filename}"
