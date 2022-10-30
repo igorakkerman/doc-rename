@@ -8,7 +8,7 @@
         Return
     }
 
-    if ( ${textContent} -cmatch "(?s).*Rechnungsnummer:\W*([0-9]+).*") {
+    if ( ${textContent} -cmatch "(?s).*Rechnungsnummer:\s*([0-9]+).*") {
         $invoiceNumber = $matches[1]
     }
     if ( ${textContent} -cmatch "(?s).*Kaufdatum: (\d{2})\.(\d{2}).(\d{4}).*") {
@@ -21,7 +21,7 @@
         Write-Output "Purchase date: $purchaseDate"
     }
     
-    if ( ${textContent} -cmatch "(?s).*Rechnungssumme.*\W+(\d+,\d{2})\W+EUR.*") { 
+    if ( ${textContent} -cmatch "(?s).*Rechnungssumme.*\s+(\d+,\d{2})\s+EUR.*") { 
         $invoiceAmount = $matches[1] 
 
         Write-Output "Invoice amount: $invoiceAmount"
