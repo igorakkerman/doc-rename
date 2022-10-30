@@ -16,7 +16,9 @@ Get-ChildItem -filter "*.pdf" | ForEach-Object {
     }
     Write-Verbose "Processing file $filename"
 
-    $documentType = if ($textContent -notmatch "Rechnungsstorno") {"Storno"} else {$null}
+    $documentType = if ($textContent -match "Rechnungsstorno") {"Storno "} else {""}
+    $documentLabel = "${documentType}SIXT share"
+
     $invoiceNumber = ${textContent} -replace "(?s).+?Rechn.\s+Nr.:\s+(\d+).*", '$1'
     $invoiceDate = ${textContent} -replace "(?s).+Pullach,\s+(\d{2})\.(\d{2}).(\d{4}).*", '$3-$2-$1'
     $invoiceAmount = ${textContent} -replace "(?s).+Endbetrag.+(\d+),(\d{2})\s+EUR.+", ' $1,$2€'
@@ -36,7 +38,7 @@ Get-ChildItem -filter "*.pdf" | ForEach-Object {
     }
     while (Test-Path "${invoiceDate} 0${index}*")
 
-    $newFilename = "${invoiceDate} 0${index} ${documentType -not -eq $null ? "$documentType " : ""}SIXT share ${invoiceNumber}${invoiceAmount}.pdf"
+    $newFilename = "${invoiceDate} 0${index} ${documentLabel} ${invoiceNumber}${invoiceAmount}.pdf"
 
     Write-Verbose "OLD:    $filename"
     Write-Verbose "NEW:    $newFilename"
