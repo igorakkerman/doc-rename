@@ -50,4 +50,3 @@
     Write-Output "Renaming '${filename}' to '${newFilename}'"
     Rename-Item -Path "${filename}" -NewName ${newFilename}
 }
-
