@@ -38,7 +38,7 @@
     do {
         ${index}++
 
-        $newFilename = "${invoiceDate} 0${index} Rechnung SHARE NOW ${invoiceNumber} ${invoiceAmount}€.pdf"
+        $newFilename = "${invoiceDate} 0${index} SHARE NOW ${invoiceNumber} ${invoiceAmount}€.pdf"
 
         if (${newFilename} -eq ${filename}) {
             Write-Output "File has correct name. Ignoring ${filename}"
