@@ -1,4 +1,5 @@
 # $VerbosePreference = "Continue"
+$VerbosePreference = "Ignore"
 
 Get-ChildItem -filter "*.pdf" | ForEach-Object {
     $filename = $_.Name
@@ -12,12 +13,24 @@ Get-ChildItem -filter "*.pdf" | ForEach-Object {
 
     Write-Verbose "Processing file $filename"
 
-    $documentType = if ($textContent -match "Rechnungsstorno") {"Storno "} else {""}
+    $documentType = if ($textContent -match "Rechnungsstorno") { "Storno " } else { "" }
     $documentLabel = "${documentType}MILES"
 
     $invoiceNumber = ${textContent} -replace "(?s).+Rechnungsnummer:\s+([A-Z0-9]+).*", '$1'
-    $invoiceAmount = ${textContent} -replace "(?s).+Bezahlt.+:\s+(\d+)\.(\d{2})\s*€.+", '$1,$2€'
-    
+ 
+    if ( 
+        $textContent -cmatch "(?s).+Fahrtkosten\s+(\d+)\.(\d{2})\s*€.+" -or
+        $textContent -cmatch "(?s).+Summe\s+(\d+)\.(\d{2})€.+" -or
+        $textContent -cmatch "(?s).+Bezahlt.+:\s+(\d+)\.(\d{2})\s*€.+" 
+    ) {
+        $euro = $matches[1]
+        $cent = $matches[2]
+        $invoiceAmount = "${euro},${cent}€"
+    }
+    else {
+        $invoiceAmount = $null
+    }
+
     if ( $textContent -cmatch "(?s).+Rechnungsdatum:\s+(\d{1,2})\s+(\S+)\s+(\d{4}).*") {
 
         $invoiceDay = "{0:00}" -f [int]$matches[1]
@@ -43,9 +56,9 @@ Get-ChildItem -filter "*.pdf" | ForEach-Object {
         $invoiceDate = "${invoiceYear}-${invoiceMonth}-${invoiceDay}"
     }
 
-    Write-Verbose "Number: $invoiceNumber"
-    Write-Verbose "Date:   $invoiceDate"
-    Write-Verbose "Amount: $invoiceAmount"
+    Write-Verbose "Number:  $invoiceNumber"
+    Write-Verbose "Date:    $invoiceDate"
+    Write-Verbose "Amount:  $invoiceAmount"
 
     if ([string]::IsNullOrWhiteSpace($invoiceNumber)) {
         Write-Verbose "Invalid data. Ignoring $filename"
