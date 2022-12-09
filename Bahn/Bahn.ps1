@@ -23,16 +23,12 @@ function Process-Document($filename) {
         $invoiceAmount = $matches[1] 
     }
     
-    if ( ${textContent} -cmatch "MwSt \(D\)\W*([0-9]+)\%") { 
-        $vatPercent = $matches[1] 
-    }
-
     if ( ${textContent} -cmatch "Halt.*\n([A-Za-zÄÖÜäöüß]+).*\n([A-Za-zÄÖÜäöüß]+)") { 
         $rideFrom = $matches[1]
         $rideTo = $matches[2]
     }
 
-    if (-not ${ticketNumber} -or -not ${invoiceDate} -or -not ${invoiceAmount} -or -not ${vatPercent} -or -not ${rideFrom} -or -not ${rideTo}) {
+    if (-not ${ticketNumber} -or -not ${invoiceDate} -or -not ${invoiceAmount} -or -not ${rideFrom} -or -not ${rideTo}) {
         Write-Host "Invalid data. Ignoring ${filename}"
         Return
     }
@@ -41,7 +37,7 @@ function Process-Document($filename) {
     do {
         ${index}++
 
-        $newFilename = "${invoiceDate} 0${index} Ticket Bahn ${rideFrom}-${rideTo} ${ticketNumber} ${vatPercent}% ${invoiceAmount}€.pdf"
+        $newFilename = "${invoiceDate} 0${index} Ticket Bahn ${rideFrom}-${rideTo} ${ticketNumber} ${invoiceAmount}€.pdf"
 
         if (${newFilename} -eq ${filename}) {
             Write-Host "File has correct name. Ignoring ${filename}"
