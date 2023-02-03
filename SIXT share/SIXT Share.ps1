@@ -32,25 +32,22 @@ Get-ChildItem -filter "*.pdf" | ForEach-Object {
         Return
     }
 
-    $index = 0;
-    do {
-        ${index}++
-    }
-    while (Test-Path "${invoiceDate} 0${index}*")
-
-    $newFilename = "${invoiceDate} 0${index} ${documentLabel} ${invoiceNumber}${invoiceAmount}.pdf"
-
-    Write-Verbose "OLD:    $filename"
-    Write-Verbose "NEW:    $newFilename"
-
-    if (${newFilename} -eq ${filename}) {
-        Write-Verbose "File has correct name. Ignoring ${filename}"
+    if ($filename -Match "${invoiceDate} \d\d ${documentLabel} ${invoiceNumber}${invoiceAmount}.pdf") {
+        Write-Verbose "File has correct name: $filename"
         Return
     }
 
-    if ($newFilename -eq $filename) {
-        return
+    $index = 0;
+    do {
+        $index++
+        $indexTwoDigits = $('{0:d2}' -f $index)
     }
+    while (Test-Path "${invoiceDate} $indexTwoDigits*")
+
+    $newFilename = "${invoiceDate} $indexTwoDigits ${documentLabel} ${invoiceNumber}${invoiceAmount}.pdf"
+
+    Write-Verbose "OLD:    $filename"
+    Write-Verbose "NEW:    $newFilename"
 
     Write-Output "Renaming '${filename}' to '${newFilename}'"
     Rename-Item -Path "${filename}" -NewName ${newFilename}
