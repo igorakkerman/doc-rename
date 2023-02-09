@@ -1,4 +1,4 @@
-﻿Get-ChildItem -filter *.pdf  | Where-Object {$_.LastWriteTime -ge "2022-10-01"} | ForEach-Object <# -Parallel #> {
+Get-ChildItem -filter *.pdf  | Where-Object { $_.LastWriteTime -ge "2022-10-01" } | ForEach-Object <# -Parallel #> {
     $filename = $_.Name
     
     $textContent = pdftotext -enc UTF-8 -layout -bom -q ${filename} - | Out-String
@@ -33,7 +33,11 @@
         Return
     }
 
-    $newFilename = "${invoiceDate} 01 Rechnung ${invoiceNumber} ${invoiceAmount}€.pdf"
+    $newFilename = "${invoiceDate} 01 Telekom ${invoiceNumber} ${invoiceAmount}€.pdf"
+    
+    if ($newFilename -eq $filename) {
+        Return
+    }
 
     Write-Output "Renaming '${filename}' to '${newFilename}'"
     Rename-Item -Path "${filename}" -NewName ${newFilename}
