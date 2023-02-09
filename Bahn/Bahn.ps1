@@ -32,7 +32,7 @@ Get-ChildItem -filter *.pdf | ForEach-Object {
     }
 
     if (-not ${ticketNumber} -or -not ${invoiceDate} -or -not ${invoiceAmount} -or -not ${rideFrom} -or -not ${rideTo}) {
-        Write-Host "Invalid data. Ignoring ${filename}"
+        Write-Output "Invalid data. Ignoring ${filename}"
         Return
     }
 
@@ -50,8 +50,8 @@ Get-ChildItem -filter *.pdf | ForEach-Object {
 
     $newFilename = "${invoiceDate} $indexTwoDigits Bahn ${rideFrom}-${rideTo} ${ticketNumber} ${invoiceAmount}€.pdf"
 
-    Write-Host "Renaming '${filename}' to '${newFilename}'"
+    Write-Output "Renaming '${filename}' to '${newFilename}'"
     Rename-Item -Path "${filename}" -NewName ${newFilename}
 }    
 
-$null = Read-Host "Fertig."
+$null = Read-Output "Fertig."
