@@ -36,7 +36,7 @@ Get-ChildItem -filter *.pdf | ForEach-Object {
         Return
     }
 
-    if ($filename -Match "${invoiceDate} \d{2} Ticket Bahn ${rideFrom}-${rideTo} ${ticketNumber} ${invoiceAmount}€.pdf") {
+    if ($filename -Match "${invoiceDate} \d{2} Bahn ${rideFrom}-${rideTo} ${ticketNumber} ${invoiceAmount}€.pdf") {
         Write-Verbose "File has correct name: $filename"
         Return
     }
@@ -48,7 +48,7 @@ Get-ChildItem -filter *.pdf | ForEach-Object {
     }
     while (Test-Path "${invoiceDate} $indexTwoDigits*")
 
-    $newFilename = "${invoiceDate} $indexTwoDigits Ticket Bahn ${rideFrom}-${rideTo} ${ticketNumber} ${invoiceAmount}€.pdf"
+    $newFilename = "${invoiceDate} $indexTwoDigits Bahn ${rideFrom}-${rideTo} ${ticketNumber} ${invoiceAmount}€.pdf"
 
     Write-Host "Renaming '${filename}' to '${newFilename}'"
     Rename-Item -Path "${filename}" -NewName ${newFilename}
