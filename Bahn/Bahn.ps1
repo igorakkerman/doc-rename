@@ -1,4 +1,9 @@
-﻿Get-ChildItem -filter *.pdf | ForEach-Object {
+﻿[CmdletBinding()]
+Param()
+
+Get-ChildItem -filter *.pdf | ForEach-Object {
+    Clear-Variable -name ("invoice*", "ride*", "ticket*")
+
     $filename = $_.Name
         
     $textContent = pdftotext.exe -layout -enc UTF-8 -bom ${filename} - | Out-String
@@ -7,7 +12,7 @@
         return
     }
 
-    if ( ${textContent} -cmatch "Datum (\d{2})\.(\d{2})\.(\d{4})\W+([A-Z0-9]{6})") {
+    if ( ${textContent} -cmatch "Datum (\d{2})\.(\d{2})\.(\d{4}).+\W([A-Z0-9]{6})\W.*") {
         $invoiceYear = $matches[3]
         $invoiceMonth = $matches[2]
         $invoiceDay = $matches[1]
