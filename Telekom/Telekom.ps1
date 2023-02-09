@@ -1,4 +1,9 @@
+﻿[CmdletBinding()]
+Param()
+
 Get-ChildItem -filter *.pdf  | Where-Object { $_.LastWriteTime -ge "2022-10-01" } | ForEach-Object <# -Parallel #> {
+    Clear-Variable -Name ("invoice*", "*filename")
+
     $filename = $_.Name
     
     $textContent = pdftotext -enc UTF-8 -layout -bom -q ${filename} - | Out-String
@@ -18,13 +23,13 @@ Get-ChildItem -filter *.pdf  | Where-Object { $_.LastWriteTime -ge "2022-10-01" 
 
         $invoiceDate = ${invoiceYear} + "-" + ${invoiceMonth} + "-" + ${invoiceDay}
 
-        Write-Output "Invoice date: $invoiceDate"
+        Write-Verbose "Invoice date: $invoiceDate"
     }
     
     if ( ${textContent} -cmatch "(?s).*Zu zahlender Betrag\s+(\d+,\d{2})\s*€.*") { 
         $invoiceAmount = $matches[1]
 
-        Write-Output "Invoice amount: $invoiceAmount"
+        Write-Verbose "Invoice amount: $invoiceAmount"
     }
     
     # Write-Output "${filename}: ${invoiceNumber} ${invoiceDate} ${InvoiceAmount}"
@@ -36,6 +41,7 @@ Get-ChildItem -filter *.pdf  | Where-Object { $_.LastWriteTime -ge "2022-10-01" 
     $newFilename = "${invoiceDate} 01 Telekom ${invoiceNumber} ${invoiceAmount}€.pdf"
     
     if ($newFilename -eq $filename) {
+        Write-Verbose "File has correct name: $filename"
         Return
     }
 
