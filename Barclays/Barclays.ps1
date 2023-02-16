@@ -1,14 +1,20 @@
-Get-ChildItem -filter *.pdf | Where-Object {$_.LastWriteTime -ge "2022-10-01"} | ForEach-Object {
+[CmdletBinding()]
+Param()
+
+Get-ChildItem -filter *.pdf | Where-Object { $_.LastWriteTime -ge "2022-10-01" } | ForEach-Object {
+    Clear-Variable -name ("statement*", "pay*")
+
     $filename = $_.Name
+    Write-Verbose "Processing file '$filename'."
 
     $textContent = pdftotext -raw -enc UTF-8 -bom -q ${filename} - | Out-String
 
-    # if (${textContent} -NotMatch "Barclay") {
-    #     Write-Host "No Barclays statement. Skipping ${filename}"
-    #     Return
-    # }
+    if (${textContent} -NotMatch "Barclays Bank Ireland PLC") {
+        Write-Verbose "No Barclays statement. Skipping ${filename}"
+        Return
+    }
 
-    if ( ${textContent} -cmatch "(?s).*Kontoübersicht vom (\d+)\. ([A-Za-zä]+) (\d{4}).*") {
+    if ( ${textContent} -cmatch "(?s).*Kontoauszug vom (\d+)\. ([A-Za-zä]+) (\d{4}).*") {
     
         $statementDay = "{0:00}" -f [int]$matches[1]
         $statementMonthText = $matches[2]
@@ -33,33 +39,32 @@ Get-ChildItem -filter *.pdf | Where-Object {$_.LastWriteTime -ge "2022-10-01"} |
         $statementDate = ${statementYear} + "-" + ${statementMonth} + "-" + ${statementDay}
     }
     
-    $statementAmount = ${textContent} -replace "(?s).*Neuer Saldo [^\n]+ ([0-9.,]+)(\+?)-?\r\n.*", '$2$1'
-    if ( ${textContent} -cmatch "(?s).*Gesamt \(EUR\) [^\n]+ ([0-9.,]+).*" ) {
-        $payAmount = $matches[1]
-        $payString = " einzahlen ${payAmount}€"
+    if (${textContent} -cmatch "(?s).*Gesamt \(EUR\) ([0-9.,]+)\s*([+-])(?: ([0-9.,]+))?.*") {
+        $statementAmount = $matches[1]
+        $sign = $matches[2]
+        $payAmount = $matches[3]
+        $payAmountString = if ($payAmount) { " einzahlen ${payAmount}€" } else { "" }
     }
-    else {
-        $payString = ""
-    }
-    $newFilename = "${statementDate} 01 Kontoübersicht ${statementAmount}€${payString}.pdf"
 
-    # Write-Host "Date:   $statementDate"
-    # Write-Host "Amount: $statementAmount"
-    # Write-Host "Pay:    $payAmount"
-    # Write-Host "OLD:    $filename"
-    # Write-Host "NEW:    $newFilename"
+    $newFilename = "${statementDate} 01 Kontoauszug ${sign}${statementAmount}€${payAmountString}.pdf"
+
+    Write-Verbose "Date:   $statementDate"
+    Write-Verbose "Amount: $sign$statementAmount"
+    Write-Verbose "Pay:    $($payAmount ?? "n/a")"
+    Write-Verbose "OLD:    $filename"
+    Write-Verbose "NEW:    $newFilename"
 
     if (-not ${statementDate} -or -not ${statementAmount}) {
-        Write-Host "Missing values. Skipping ${filename}"
+        Write-Output "Missing values. Skipping '${filename}'"
         Return
     }
 
     if (${newFilename} -eq ${filename}) {
-        Write-Host "Correct name. Skipping ${filename}"
+        Write-Verbose "Correct name. Skipping ${filename}"
         Return
     }
 
-    Write-Host "Renaming '${filename}' to '${newFilename}'"
+    Write-Output "Renaming '${filename}' to '${newFilename}'"
     Rename-Item -Path "${filename}" -NewName ${newFilename}
 }
 
