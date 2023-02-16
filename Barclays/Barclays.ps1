@@ -8,7 +8,7 @@ Get-ChildItem -filter *.pdf | Where-Object {$_.LastWriteTime -ge "2019-01-01"} |
     #     Return
     # }
 
-    if ( ${textContent} -cmatch "(?s).*Kontoübersicht vom ([0-9]+)\. ([A-Za-zä]+) ([0-9][0-9][0-9][0-9]).*") {
+    if ( ${textContent} -cmatch "(?s).*Kontoübersicht vom (\d+)\. ([A-Za-zä]+) (\d{4}).*") {
     
         $statementDay = "{0:00}" -f [int]$matches[1]
         $statementMonthText = $matches[2]
