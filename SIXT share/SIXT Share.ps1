@@ -21,7 +21,7 @@ Get-ChildItem -filter "*.pdf" | ForEach-Object {
 
     $invoiceNumber = ${textContent} -replace "(?s).+?Rechn.\s+Nr.:\s+(\d+).*", '$1'
     $invoiceDate = ${textContent} -replace "(?s).+Pullach,\s+(\d{2})\.(\d{2}).(\d{4}).*", '$3-$2-$1'
-    $invoiceAmount = ${textContent} -replace "(?s).+Endbetrag.+(\d+),(\d{2})\s+EUR.+", ' $1,$2€'
+    $invoiceAmount = ${textContent} -replace "(?s).+Endbetrag\s+(\d+),(\d{2})\s+EUR.+", ' $1,$2€'
 
     Write-Verbose "Number: $invoiceNumber"
     Write-Verbose "Date:   $invoiceDate"
