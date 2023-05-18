@@ -19,7 +19,7 @@ Get-ChildItem -filter "*.pdf" | ForEach-Object {
     $documentType = if ($textContent -match "Rechnungsstorno") {"Storno "} else {""}
     $documentLabel = "${documentType}SIXT share"
 
-    $invoiceNumber = ${textContent} -replace "(?s).+?Rechn.\s+Nr.:\s+(\d+).*", '$1'
+    $invoiceNumber = ${textContent} -replace "(?s).+?Rechn\.\s+Nr.:\s+(\d+).*", '$1'
     $invoiceDate = ${textContent} -replace "(?s).+Pullach,\s+(\d{2})\.(\d{2}).(\d{4}).*", '$3-$2-$1'
     $invoiceAmount = ${textContent} -replace "(?s).+Endbetrag\s+(\d+),(\d{2})\s+EUR.+", ' $1,$2€'
 
