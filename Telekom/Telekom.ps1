@@ -1,12 +1,12 @@
 ﻿[CmdletBinding()]
 Param()
 
-Get-ChildItem -filter *.pdf  | Where-Object { $_.LastWriteTime -ge "2022-10-01" } | ForEach-Object <# -Parallel #> {
+Get-ChildItem -filter *.pdf  | Where-Object { $_.LastWriteTime -ge "2024-01-01" } | ForEach-Object <# -Parallel #> {
     Clear-Variable -Name ("invoice*", "*filename")
 
     $filename = $_.Name
     
-    $textContent = pdftotext -enc UTF-8 -layout -bom -q ${filename} - | Out-String
+    $textContent = pdftotext -enc UTF-8 -simple -bom -q ${filename} - | Out-String
 
     if (${textContent} -NotMatch "Telekom Deutschland GmbH") {
         Write-Output "Not from Telekom. Ignoring ${filename}"
@@ -26,7 +26,7 @@ Get-ChildItem -filter *.pdf  | Where-Object { $_.LastWriteTime -ge "2022-10-01" 
         Write-Verbose "Invoice date: $invoiceDate"
     }
     
-    if ( ${textContent} -cmatch "(?s).*Zu zahlender Betrag\s+(\d+,\d{2})\s*€.*") { 
+    if ( ${textContent} -cmatch "(?s).*Rechnungsbetrag\s+(\d+,\d{2})\s*€.*") { 
         $invoiceAmount = $matches[1]
 
         Write-Verbose "Invoice amount: $invoiceAmount"
