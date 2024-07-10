@@ -50,4 +50,4 @@ Get-ChildItem -filter *.pdf  | Where-Object { $_.LastWriteTime -ge "2024-01-01" 
 }
 
 New-Item -ItemType Directory -Force signature | Out-Null
-Move-Item *.ads signature
+Move-Item *.ads signature -Force
