@@ -12,7 +12,7 @@
         Return
     }
 
-    $newFilename = "${invoiceDate} 01 Rechnung ${invoiceNumber} ${invoiceAmount}€.pdf"
+    $newFilename = "${invoiceDate} 01 M-net ${invoiceNumber} ${invoiceAmount}€.pdf"
 
     Write-Host "Renaming '${filename}' to '${newFilename}'"
     Rename-Item -Path "${filename}" -NewName ${newFilename}
