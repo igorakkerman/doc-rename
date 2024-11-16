@@ -39,7 +39,7 @@ Get-ChildItem -filter *.pdf | Where-Object { $_.LastWriteTime -ge "2022-10-01" }
         $statementDate = ${statementYear} + "-" + ${statementMonth} + "-" + ${statementDay}
     }
     
-    if (${textContent} -cmatch "(?s).*Gesamt \(EUR\) ([0-9.,]+)\s*([+-])(?: ([0-9.,]+))?.*") {
+    if (${textContent} -cmatch "(?s).*Gesamt \(EUR\) ([0-9.,]+)\s*(?:([+-]) ([0-9.,]+))?.*") {
         $statementAmount = $matches[1]
         $sign = $matches[2]
         $payAmount = $matches[3]
