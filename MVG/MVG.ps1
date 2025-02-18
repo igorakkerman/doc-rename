@@ -1,4 +1,4 @@
-﻿Get-ChildItem -filter *.pdf  | Where-Object {$_.LastWriteTime -ge "2022-10-01"} | ForEach-Object <# -Parallel #> {
+﻿Get-ChildItem -filter *.pdf  | Where-Object {$_.LastWriteTime -ge "2025-01-01"} | ForEach-Object <# -Parallel #> {
     $filename = $_.Name
     
     $textContent = pdftotext -enc UTF-8 -bom -q ${filename} - | Out-String
