@@ -1,7 +1,10 @@
 [CmdletBinding()]
 Param()
 
-Get-ChildItem -filter *.pdf | Where-Object { $_.LastWriteTime -ge "2022-10-01" } | ForEach-Object {
+# $VerbosePreference = "Continue"
+# $VerbosePreference = "Ignore"
+
+Get-ChildItem -filter *.pdf | Where-Object { $_.LastWriteTime -ge "2025-02-01" } | ForEach-Object {
     Clear-Variable -name ("statement*", "pay*")
 
     $filename = $_.Name
