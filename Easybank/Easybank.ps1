@@ -13,11 +13,11 @@ Get-ChildItem -filter *.pdf | Where-Object { $_.LastWriteTime -ge "2025-02-01" }
     $textContent = pdftotext -raw -enc UTF-8 -bom -q ${filename} - | Out-String
 
     if (${textContent} -NotMatch "BAWAG AG") {
-        Write-Verbose "No Barclays statement. Skipping ${filename}"
+        Write-Verbose "No Easybank statement. Skipping ${filename}"
         Return
     }
 
-    if ( ${textContent} -cmatch "(?s).*Kontoauszug zu Ihrer Barclays Kreditkarte vom (\d+)\. ([A-Za-zä]+) (\d{4}).*") {
+    if ( ${textContent} -cmatch "(?s).*Kontoauszug zu Ihrer (?:.+) Kreditkarte vom (\d+)\. ([A-Za-zä]+) (\d{4}).*") {
 
         Write-Verbose "$textContent"
 
